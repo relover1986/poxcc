@@ -1,0 +1,58 @@
+#In[]
+import xlrd
+import xlsxwriter as xw
+from datetime import datetime as t
+
+a = str(round((t.now().year)/4))
+
+b=input('密码:')
+if a==b:
+    
+    print("密码对了")
+
+    wb=xlrd.open_workbook('c:/in/待合并.xlsx')#打开excel
+    sht=wb.sheets()[0]#打开工作簿
+    rows = sht.nrows#读取行数
+    cols = sht.ncols#读取列数
+
+    f=xw.Workbook('c:/out/合并单元格.xlsx')
+    sheet = f.add_worksheet(sht.name)
+
+    d = []#合并单元格
+
+    for i in range(int(rows)):
+        a=sht.cell_value(i,0)#第0列
+        b=sht.cell_value(i-1,0)#第0列
+        if a!=b and i-1>=0:        
+    
+            d.append(i-1)     
+    d.append(int(rows)-1)
+    
+
+    for col in range(cols):
+        for i in range (rows):
+            text=sht.cell_value(i,col)#第n列
+                    
+            sheet.write(i,col,str(text))#第n列 
+
+
+    lst=input('需要合并列(大写字母):')
+    x=list(lst)#需要合并列
+    l=list('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+    
+    for i in x:   
+        n=0
+        for m in range(len(d)-1):
+            text=sht.cell_value(d[m]+1,l.index(i))
+        
+            if str(d[n]+2)!=str(d[n+1]+1):       
+                sheet.merge_range(i+str(d[n]+2)+':'+i+str(d[n+1]+1), text)
+                n=n+1
+            else:
+                sheet.write(d[n]+1, l.index(i), text)
+                n=n+1
+    f.close()
+    print('-----------------------')
+
+
+# %%
